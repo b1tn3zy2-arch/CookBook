@@ -6,7 +6,7 @@
 <div class="hero">
     <div>
         <h1>Мои рецепты</h1>
-        <p>Найдено: {{ recipes.paginator.count }}</p>
+        <p>Найдено: {{ total_count }}</p>
     </div>
     <a class="btn btn-primary" href="{% url 'recipe_create' %}">＋ Новый рецепт</a>
 </div>

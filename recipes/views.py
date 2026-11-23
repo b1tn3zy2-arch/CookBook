@@ -67,6 +67,9 @@ class RecipeListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Если страница одна, Django кладёт в контекст QuerySet, а не Page,
+        # поэтому общее количество считаем явно (работает и с пагинацией).
+        context['total_count'] = self.object_list.count()
         context['categories'] = Category.objects.all()
         context['selected_category'] = self.request.GET.get('category', '')
         context['only_favorites'] = self.request.GET.get('favorite') == '1'

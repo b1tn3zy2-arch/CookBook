@@ -110,6 +110,7 @@ class CookbookTests(TestCase):
 
         response = self.client.get(url, {'favorite': '1'})
         self.assertEqual([r.title for r in response.context['recipes']], ['Тирамису'])
+        self.assertEqual(response.context['total_count'], 1)
 
         response = self.client.get(url, {'max_time': '60'})
         self.assertEqual([r.title for r in response.context['recipes']], ['Тирамису'])
