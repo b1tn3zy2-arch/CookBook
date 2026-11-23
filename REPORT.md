@@ -315,7 +315,7 @@ def toggle_favorite(request, pk):
 Вход и выход реализованы встроенными `LoginView` и `LogoutView`
 (в `recipes/urls.py`), шаблоны — `login.html` и `register.html`.
 
-**Ссылка на репозиторий Git:** _[вставить ссылку]_
+**Ссылка на репозиторий Git:** https://github.com/b1tn3zy2-arch/CookBook.git
 
 ---
 
