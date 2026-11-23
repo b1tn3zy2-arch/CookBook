@@ -1,0 +1,113 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}Мои рецепты — Кулинарная книга{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div>
+        <h1>Мои рецепты</h1>
+        <p>Найдено: {{ recipes.paginator.count }}</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'recipe_create' %}">＋ Новый рецепт</a>
+</div>
+
+<form method="get" class="card filters">
+    <div class="card-body">
+        <div class="filter-grid">
+            <div class="field">
+                <label for="category">Категория</label>
+                <select name="category" id="category">
+                    <option value="">Все категории</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label for="favorite">Признак</label>
+                <select name="favorite" id="favorite">
+                    <option value="">Все рецепты</option>
+                    <option value="1" {% if only_favorites %}selected{% endif %}>Только избранные</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="max_time">Время не больше, мин</label>
+                <input type="number" name="max_time" id="max_time" min="1" placeholder="Например, 30" value="{{ max_time }}">
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Применить</button>
+            </div>
+        </div>
+        {% if selected_category or only_favorites or max_time %}
+            <p style="margin: 14px 0 0"><a href="{% url 'recipe_list' %}">Сбросить фильтры</a></p>
+        {% endif %}
+    </div>
+</form>
+
+<div class="card">
+    <div class="table-wrap">
+        <table class="recipes">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Категория</th>
+                    <th>Время</th>
+                    <th>Избранное</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recipe in recipes %}
+                <tr>
+                    <td class="recipe-title">{{ recipe.title }}</td>
+                    <td><span class="badge badge-category">{{ recipe.category.name }}</span></td>
+                    <td><span class="badge badge-time">{{ recipe.cooking_time }} мин</span></td>
+                    <td>
+                        {% if recipe.is_favorite %}
+                            <span class="badge badge-favorite">★ Избранное</span>
+                        {% else %}
+                            <span class="badge badge-time">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <form method="post" action="{% url 'recipe_favorite' recipe.pk %}" class="favorite-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="query_string" value="{{ query_string }}">
+                                <button type="submit" class="btn btn-ghost btn-small {% if recipe.is_favorite %}fav-on{% endif %}">
+                                    {% if recipe.is_favorite %}★ В избранном{% else %}☆ В избранное{% endif %}
+                                </button>
+                            </form>
+                            <a class="btn btn-ghost btn-small" href="{% url 'recipe_update' recipe.pk %}">Редактировать</a>
+                            <a class="btn btn-ghost btn-small" href="{% url 'recipe_delete' recipe.pk %}">Удалить</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty">
+                            <div class="empty-icon">📖</div>
+                            <p>Рецептов пока нет. Добавьте первый рецепт!</p>
+                            <a class="btn btn-primary" href="{% url 'recipe_create' %}">＋ Новый рецепт</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a class="btn" href="?page={{ page_obj.previous_page_number }}{% if query_string %}&amp;{{ query_string }}{% endif %}">← Назад</a>
+    {% endif %}
+    <span class="current">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a class="btn" href="?page={{ page_obj.next_page_number }}{% if query_string %}&amp;{{ query_string }}{% endif %}">Вперёд →</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

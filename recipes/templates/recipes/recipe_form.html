@@ -1,0 +1,46 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}{% if object %}Редактирование рецепта{% else %}Новый рецепт{% endif %} — Кулинарная книга{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div>
+        <h1>{% if object %}Редактировать рецепт{% else %}Новый рецепт{% endif %}</h1>
+        <p>{% if object %}{{ object.title }}{% else %}Заполните форму, чтобы добавить рецепт в коллекцию{% endif %}</p>
+    </div>
+    <a class="btn btn-ghost" href="{% url 'recipe_list' %}">← К списку</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="non-field-errors">{{ form.non_field_errors }}</div>
+            {% endif %}
+            {% for field in form %}
+                {% if field.name == 'is_favorite' %}
+                    <div class="checkbox-field">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}
+                    </div>
+                {% else %}
+                    <div class="field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
+                        {% for error in field.errors %}<span class="error">{{ error }}</span>{% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    {% if object %}Сохранить изменения{% else %}Добавить рецепт{% endif %}
+                </button>
+                <a class="btn btn-ghost" href="{% url 'recipe_list' %}">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

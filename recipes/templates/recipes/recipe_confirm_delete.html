@@ -1,0 +1,20 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}Удаление рецепта — Кулинарная книга{% endblock %}
+
+{% block content %}
+<div class="card danger-card">
+    <div class="card-body">
+        <div class="danger-icon">⚠️</div>
+        <h1>Вы уверены?</h1>
+        <p>Рецепт «{{ object.title }}» будет безвозвратно удалён из вашей коллекции.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">Да, удалить</button>
+                <a class="btn btn-ghost" href="{% url 'recipe_list' %}">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

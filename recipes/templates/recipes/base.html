@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Кулинарная книга{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="brand" href="{% url 'recipe_list' %}">
+                <span class="brand-icon">🍳</span>
+                Кулинарная книга
+            </a>
+            <nav class="site-nav">
+                {% if user.is_authenticated %}
+                    <span class="user-chip">{{ user.username }}</span>
+                    <a class="btn btn-ghost" href="{% url 'recipe_list' %}">Мои рецепты</a>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-ghost">Выйти</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-ghost" href="{% url 'login' %}">Войти</a>
+                    <a class="btn btn-primary" href="{% url 'register' %}">Регистрация</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-error{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">Кулинарная книга — учебный проект на Django</footer>
+</body>
+</html>
